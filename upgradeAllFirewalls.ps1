@@ -61,6 +61,8 @@ add-type @"
     }
 "@
 [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+# This code allows TLS 1.0,1.1,and 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls -bor [Net.SecurityProtocolType]::Tls11 -bor [Net.SecurityProtocolType]::Tls12
 #########################
 function checkSoftwareUpdate {
     param (
@@ -359,6 +361,9 @@ function main {
     Write-Verbose "Starting Upgrade Jobs on all remaining firewalls"
     $firewallUpgradeJobCode = {
         try{
+            # This code allows TLS 1.0,1.1,and 1.2
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls -bor [Net.SecurityProtocolType]::Tls11 -bor [Net.SecurityProtocolType]::Tls12
+            # call the upgrade
             $upgradeOutput = upgradeFirewall -panoramaUrl $args[0] -panoramaApiKey $args[1] -firewallSerial $args[2] -firewallName $args[3] -SoftwareVersion $args[4] -firewallIP $args[5] -Canary $args[6]
         }
         catch{
